@@ -35,5 +35,9 @@
     "presets": [
       "es2015"
     ]
+  },
+  "nodemonConfig": {
+    "ignore": ["archives/*"],
+    "delay": "50"
   }
 }
