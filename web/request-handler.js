@@ -8,10 +8,6 @@ var fs = require('fs');
 
 exports.handleRequest = function (req, res) {
   console.log('Request Method: ' + req.method + ' Request URL:' + req.url);
-
-  var urlArray = ['www.example.com', 'www.google.com'];
-  archive.downloadUrls(urlArray);  
-  
   
   if (req.method === 'GET') {
     if (req.url === '/') {
@@ -45,14 +41,19 @@ exports.handleRequest = function (req, res) {
       data += chunk;
     });
     req.on('end', function () {
-      data = querystring.parse(data).url + '\n';
-      fs.appendFile(archive.paths.list, data, function(err) {
-        if (err) {
-          res.writeHead(500, helpers.headers);
-          res.end();        
-        } else {
-          res.writeHead(302, helpers.headers);
-          res.end();           
+      var url = querystring.parse(data).url;
+      
+      archive.isUrlInList(url, function(exist) {
+        if (!exist) {
+          archive.addUrlToList(url + '\n', function(err) {
+            if (!err) {
+              res.writeHead(302, helpers.headers);
+              res.end();
+            } else {
+              res.writeHead(500, helpers.headers);
+              res.end();
+            }
+          });
         }
       });
     });
