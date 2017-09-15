@@ -10,8 +10,7 @@ exports.handleRequest = function (req, res) {
   console.log('Request Method: ' + req.method + ' Request URL:' + req.url);
   
   if (req.method === 'GET') {
-    if (req.url = '/') {
-      
+    if (req.url === '/') {
       fs.readFile(archive.paths.siteAssets + '/index.html', function(err, data) {
         if (err) {
           res.writeHead(404, helpers.headers);
@@ -20,6 +19,18 @@ exports.handleRequest = function (req, res) {
           res.writeHead(200, helpers.headers);
           res.end(data);
         }
+      });
+    } else {
+      var filePath = archive.paths.archivedSites + req.url;
+      //console.log(filePath);
+      fs.readFile(filePath, function(err, data) {
+        if (err) {
+          res.writeHead(404, helpers.headers);
+          res.end();
+        } else {
+          res.writeHead(200, helpers.headers);
+          res.end(data);
+        }      
       });
     }
   }
