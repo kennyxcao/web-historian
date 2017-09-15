@@ -35,5 +35,24 @@ exports.handleRequest = function (req, res) {
     }
   }
 
+  if (req.method === 'POST') {
+    var data = '';
+    req.on('data', function (chunk) {
+      data += chunk;
+    });
+    req.on('end', function () {
+      data = querystring.parse(data).url + '\n';
+      fs.appendFile(archive.paths.list, data, function(err) {
+        if (err) {
+          res.writeHead(500, helpers.headers);
+          res.end();        
+        } else {
+          res.writeHead(302, helpers.headers);
+          res.end();           
+        }
+      });
+    });
+  }
+
   //res.end(archive.paths.list);
 };
