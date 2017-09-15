@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var http = require('http');
 var _ = require('underscore');
 
 /*
@@ -26,16 +27,46 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  fs.readFile(exports.paths.list, function(err, data) {
+    if (!err) {
+      callback(data.toString().split('\n'));
+    }
+  });
 };
 
 exports.isUrlInList = function(url, callback) {
+  exports.readListOfUrls(function(array) {
+    callback(array.includes(url));
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
+  fs.appendFile(exports.paths.list, url, function(err) {
+    if (!err) {
+      callback();
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.readFile(exports.paths.archivedSites + '/' + url, function(err, data) {
+    callback(!!data);    
+  });
 };
 
 exports.downloadUrls = function(urls) {
+  urls.forEach(function(url) {
+    http.get('http://' + url, function(response) {      
+      var path = exports.paths.archivedSites + '/' + url;
+      var newFile = fs.createWriteStream(path);
+      response.pipe(newFile);
+    });
+  });  
 };
+
+
+
+
+
+
+

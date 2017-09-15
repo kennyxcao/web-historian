@@ -8,6 +8,10 @@ var fs = require('fs');
 
 exports.handleRequest = function (req, res) {
   console.log('Request Method: ' + req.method + ' Request URL:' + req.url);
+
+  var urlArray = ['www.example.com', 'www.google.com'];
+  archive.downloadUrls(urlArray);  
+  
   
   if (req.method === 'GET') {
     if (req.url === '/') {
