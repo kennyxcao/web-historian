@@ -48,9 +48,9 @@ exports.addUrlToList = function(url, callback) {
   });
 };
 
-exports.isUrlArchived = function(url, callback) {
-  fs.readFile(exports.paths.archivedSites + '/' + url, function(err, data) {
-    callback(!!data);    
+exports.isUrlArchived = function(url, callback, i) {
+  fs.access(exports.paths.archivedSites + '/' + url, fs.constants.F_OK, function(err) {
+    callback(!err, i); 
   });
 };
 

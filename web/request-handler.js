@@ -32,6 +32,11 @@ exports.handleRequest = function (req, res) {
             res.writeHead(err ? 500 : 302, helpers.headers);
             res.end();
           });
+        } else {
+          // TODO: if url archived
+          //         return archived page to client
+          //       else
+          //         return loading.html to client
         }
       });
     });
