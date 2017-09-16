@@ -10,29 +10,12 @@ exports.handleRequest = function (req, res) {
   console.log('Request Method: ' + req.method + ' Request URL:' + req.url);
   
   if (req.method === 'GET') {
-    if (req.url === '/') {
-      fs.readFile(archive.paths.siteAssets + '/index.html', function(err, data) {
-        if (err) {
-          res.writeHead(404, helpers.headers);
-          res.end();
-        } else {
-          res.writeHead(200, helpers.headers);
-          res.end(data);
-        }
-      });
-    } else {
-      var filePath = archive.paths.archivedSites + req.url;
-      //console.log(filePath);
-      fs.readFile(filePath, function(err, data) {
-        if (err) {
-          res.writeHead(404, helpers.headers);
-          res.end();
-        } else {
-          res.writeHead(200, helpers.headers);
-          res.end(data);
-        }      
-      });
-    }
+    var filePath = req.url === '/' ? archive.paths.siteAssets + '/index.html' : archive.paths.archivedSites + req.url;
+
+    fs.readFile(filePath, function(err, data) {
+      res.writeHead(err ? 404 : 200, helpers.headers);
+      res.end(data);
+    });
   }
 
   if (req.method === 'POST') {
@@ -46,18 +29,11 @@ exports.handleRequest = function (req, res) {
       archive.isUrlInList(url, function(exist) {
         if (!exist) {
           archive.addUrlToList(url + '\n', function(err) {
-            if (!err) {
-              res.writeHead(302, helpers.headers);
-              res.end();
-            } else {
-              res.writeHead(500, helpers.headers);
-              res.end();
-            }
+            res.writeHead(err ? 500 : 302, helpers.headers);
+            res.end();
           });
         }
       });
     });
   }
-
-  //res.end(archive.paths.list);
 };
