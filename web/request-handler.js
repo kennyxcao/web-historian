@@ -30,13 +30,16 @@ exports.handleRequest = function (req, res) {
         if (!exist) {
           archive.addUrlToList(url + '\n', function(err) {
             res.writeHead(err ? 500 : 302, helpers.headers);
-            res.end();
+            var fileStream = fs.createReadStream(archive.paths.siteAssets + '/loading.html');
+            fileStream.pipe(res); 
           });
         } else {
-          // TODO: if url archived
-          //         return archived page to client
-          //       else
-          //         return loading.html to client
+          archive.isUrlArchived(url, function(exist) {
+            res.writeHead(exist ? 302 : 500, helpers.headers);            
+            var redirect = exist ? archive.paths.archivedSites + '/' + url : archive.paths.siteAssets + '/loading.html';
+            var fileStream = fs.createReadStream(redirect);
+            fileStream.pipe(res);
+          });
         }
       });
     });
