@@ -6,7 +6,6 @@ var cron = require('node-cron');
 var Promise = require('bluebird');
 
 cron.schedule('* * * * *', function() {
-  var fetchURLs = [];
   archive.readListOfUrlsAsync()
   .then(function(urls) {
     return Promise.all(urls.map(url => archive.isUrlArchivedAsync(url)).map(p => p.catch(e => e.message)));
